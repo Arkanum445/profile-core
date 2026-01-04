@@ -10,7 +10,6 @@
 <body>
   <div class="bg" aria-hidden="true"></div>
   <div class="noise" aria-hidden="true"></div>
-
   <canvas id="fx" aria-hidden="true"></canvas>
 
   <main class="wrap">
@@ -19,20 +18,21 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <div class="brand-title">Profile Core</div>
-          <div class="brand-sub">Private profile capture · Aurora Rose edition</div>
+          <div class="brand-sub">A private profile crafted with care</div>
         </div>
       </div>
 
       <div class="top-actions">
         <button class="ghost" id="btnLoad" type="button">Load</button>
+        <button class="ghost" id="btnView" type="button">View</button>
       </div>
     </header>
 
-    <section class="card" aria-label="Formulario">
+    <section class="card">
       <div class="card-head">
         <div>
           <h1 class="h1">Perfil</h1>
-          <p class="lead">Responde con calma. Esto se guarda en tu dispositivo por ahora.</p>
+          <p class="lead">Completa esto con calma. Se guarda en tu dispositivo.</p>
         </div>
 
         <div class="meter">
@@ -46,12 +46,11 @@
       <div class="line"></div>
 
       <form id="profileForm" class="form" novalidate>
-        <!-- STEP 1 -->
         <section class="step is-active" data-step="1">
           <div class="step-head">
             <div class="step-kicker">Paso 1</div>
             <h2 class="h2">Identidad</h2>
-            <p class="muted">Información base y detalles personales.</p>
+            <p class="muted">Detalles base.</p>
           </div>
 
           <div class="grid">
@@ -68,18 +67,18 @@
 
             <div class="field">
               <label for="colorFav">Color favorito</label>
-              <input id="colorFav" name="colorFav" placeholder="Ej. Lavanda" />
+              <input id="colorFav" name="colorFav" placeholder="Ej. Rosado suave" />
             </div>
 
             <div class="field">
               <label for="mood">Estado actual</label>
               <select id="mood" name="mood">
                 <option value=""></option>
-                <option>Calma</option>
-                <option>Enfocada</option>
+                <option>Tranquila</option>
+                <option>Feliz</option>
+                <option>Cansada</option>
                 <option>Motivada</option>
-                <option>Creativa</option>
-                <option>Con sueño</option>
+                <option>Enamorada</option>
               </select>
             </div>
 
@@ -90,7 +89,6 @@
           </div>
         </section>
 
-        <!-- STEP 2 -->
         <section class="step" data-step="2">
           <div class="step-head">
             <div class="step-kicker">Paso 2</div>
@@ -101,7 +99,7 @@
           <div class="grid">
             <div class="field col-2">
               <label for="comidas">Comidas favoritas</label>
-              <textarea id="comidas" name="comidas" rows="3" placeholder="Ej. sushi, pasta, ceviche"></textarea>
+              <textarea id="comidas" name="comidas" rows="3"></textarea>
             </div>
 
             <div class="field col-2">
@@ -111,12 +109,12 @@
 
             <div class="field">
               <label for="bebidas">Bebidas favoritas</label>
-              <input id="bebidas" name="bebidas" placeholder="Ej. limonada, café" />
+              <input id="bebidas" name="bebidas" />
             </div>
 
             <div class="field">
               <label for="postres">Postres favoritos</label>
-              <input id="postres" name="postres" placeholder="Ej. helado, cheesecake" />
+              <input id="postres" name="postres" />
             </div>
 
             <div class="field">
@@ -131,17 +129,16 @@
           </div>
         </section>
 
-        <!-- STEP 3 -->
         <section class="step" data-step="3">
           <div class="step-head">
             <div class="step-kicker">Paso 3</div>
             <h2 class="h2">Relación</h2>
-            <p class="muted">Cómo te sientes cuidada y qué te hace bien.</p>
+            <p class="muted">Cómo te sientes cuidada.</p>
           </div>
 
           <div class="field">
             <label>Lenguajes de aprecio (máximo 2)</label>
-            <div class="chips" id="loveChips" role="group" aria-label="Lenguajes">
+            <div class="chips" id="loveChips">
               <button type="button" class="chip" data-val="Palabras">Palabras</button>
               <button type="button" class="chip" data-val="Tiempo">Tiempo</button>
               <button type="button" class="chip" data-val="Detalles">Detalles</button>
@@ -149,7 +146,7 @@
               <button type="button" class="chip" data-val="Contacto">Contacto</button>
             </div>
             <input name="lenguajes" id="lenguajes" type="hidden" />
-            <div class="hint">Selecciona hasta 2. Se guarda tal cual.</div>
+            <div class="hint">Selecciona hasta 2</div>
           </div>
 
           <div class="grid">
@@ -170,12 +167,11 @@
           </div>
         </section>
 
-        <!-- STEP 4 -->
         <section class="step" data-step="4">
           <div class="step-head">
             <div class="step-kicker">Paso 4</div>
             <h2 class="h2">Límites</h2>
-            <p class="muted">Claridad y respeto. Esto también importa.</p>
+            <p class="muted">Claridad y respeto.</p>
           </div>
 
           <div class="grid">
@@ -195,7 +191,7 @@
             </div>
 
             <div class="field">
-              <label for="extra">Notas adicionales</label>
+              <label for="extra">Notas</label>
               <textarea id="extra" name="extra" rows="3"></textarea>
             </div>
           </div>
@@ -214,14 +210,21 @@
 
       <div class="line"></div>
 
-      <section class="preview">
-        <div class="preview-head">
+      <section class="view is-hidden" id="prettyView" aria-label="Vista bonita">
+        <div class="view-head">
           <div>
-            <div class="preview-title">Vista previa</div>
-            <div class="muted small">Payload guardado localmente</div>
+            <div class="view-title">Vista</div>
+            <div class="muted small">Presentación limpia (no JSON)</div>
           </div>
-          <button class="ghost" id="btnClear" type="button">Clear</button>
+          <div class="view-actions">
+            <button class="ghost" id="btnEdit" type="button">Edit</button>
+            <button class="ghost" id="btnDebug" type="button">Debug</button>
+            <button class="ghost" id="btnClear" type="button">Clear</button>
+          </div>
         </div>
+
+        <div class="tiles" id="tiles"></div>
+
         <pre id="preview" class="code is-hidden"></pre>
       </section>
     </section>

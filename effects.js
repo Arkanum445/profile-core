@@ -19,27 +19,50 @@ resize();
 function rand(a, b) { return a + Math.random() * (b - a); }
 
 const hearts = [];
-const sparks = [];
+const glows = [];
+
+class Glow {
+  constructor(){ this.reset(true); }
+  reset(initial=false){
+    this.x = rand(0, w);
+    this.y = rand(0, h);
+    this.r = rand(120, 260);
+    this.a = rand(0.035, 0.08);
+    this.vx = rand(-0.05, 0.05);
+    this.vy = rand(-0.05, 0.05);
+  }
+  update(){
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < -300 || this.x > w + 300 || this.y < -300 || this.y > h + 300) this.reset(false);
+  }
+  draw(){
+    const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
+    g.addColorStop(0, `rgba(255, 96, 168, ${this.a})`);
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,w,h);
+  }
+}
 
 class Heart {
-  constructor() { this.reset(true); }
-  reset(initial=false) {
+  constructor(){ this.reset(true); }
+  reset(initial=false){
     this.x = rand(0, w);
-    this.y = initial ? rand(0, h) : h + rand(30, 200);
-    this.vy = rand(0.25, 0.65);
-    this.vx = rand(-0.18, 0.18);
-    this.size = rand(10, 18);
-    this.alpha = rand(0.05, 0.14);
+    this.y = initial ? rand(0, h) : h + rand(40, 220);
+    this.vy = rand(0.25, 0.60);
+    this.vx = rand(-0.12, 0.12);
+    this.size = rand(10, 16);
+    this.alpha = rand(0.05, 0.12);
     this.phase = rand(0, Math.PI * 2);
   }
-  update() {
+  update(){
     this.y -= this.vy;
-    this.x += this.vx + Math.sin(this.phase) * 0.25;
+    this.x += this.vx + Math.sin(this.phase) * 0.22;
     this.phase += 0.02;
     if (this.y < -40) this.reset(false);
   }
-  draw() {
-    const a = this.alpha;
+  draw(){
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.scale(this.size / 18, this.size / 18);
@@ -50,86 +73,61 @@ class Heart {
     ctx.bezierCurveTo(0, 15, 10, 12, 10, 3);
     ctx.bezierCurveTo(10, -4, 0, -4, 0, 5);
     ctx.closePath();
-    ctx.fillStyle = `rgba(255, 92, 168, ${a})`;
+    ctx.fillStyle = `rgba(255, 96, 168, ${this.alpha})`;
     ctx.fill();
     ctx.restore();
   }
 }
 
-class Spark {
-  constructor() { this.reset(true); }
-  reset(initial=false) {
-    this.x = rand(0, w);
-    this.y = initial ? rand(0, h) : rand(h * 0.2, h * 0.9);
-    this.r = rand(0.8, 2.0);
-    this.alpha = rand(0.04, 0.12);
-    this.vx = rand(-0.08, 0.08);
-    this.vy = rand(-0.06, 0.06);
-  }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    if (this.x < -20 || this.x > w + 20 || this.y < -20 || this.y > h + 20) this.reset(false);
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0, 208, 255, ${this.alpha})`;
-    ctx.fill();
-  }
-}
-
-for (let i = 0; i < 55; i++) hearts.push(new Heart());
-for (let i = 0; i < 90; i++) sparks.push(new Spark());
+for (let i=0;i<5;i++) glows.push(new Glow());
+for (let i=0;i<40;i++) hearts.push(new Heart());
 
 let t = 0;
 
-function petalPoint(a, k) {
-  const r = 130 * Math.sin(k * a);
+function petal(a, k){
+  const r = 120 * Math.sin(k * a);
   return { x: r * Math.cos(a), y: r * Math.sin(a) };
 }
 
-function drawRose() {
+function drawRose(){
   const cx = w * 0.5;
-  const cy = h * 0.42;
+  const cy = h * 0.40;
 
   ctx.save();
   ctx.translate(cx, cy);
 
   ctx.beginPath();
-  const k = 6;
+  const k = 7;
   for (let a = 0; a < Math.PI * 2 + 0.03; a += 0.02) {
-    const p = petalPoint(a + t, k);
+    const p = petal(a + t, k);
     ctx.lineTo(p.x, p.y);
   }
-
-  ctx.strokeStyle = "rgba(164, 112, 255, 0.22)";
-  ctx.lineWidth = 1.25;
+  ctx.strokeStyle = "rgba(255, 230, 198, 0.10)";
+  ctx.lineWidth = 1.1;
   ctx.stroke();
 
   ctx.beginPath();
-  const k2 = 9;
+  const k2 = 10;
   for (let a = 0; a < Math.PI * 2 + 0.03; a += 0.02) {
-    const p = petalPoint(a - t * 0.7, k2);
+    const p = petal(a - t * 0.65, k2);
     ctx.lineTo(p.x * 0.72, p.y * 0.72);
   }
-
-  ctx.strokeStyle = "rgba(255, 92, 168, 0.16)";
+  ctx.strokeStyle = "rgba(110, 220, 255, 0.08)";
   ctx.lineWidth = 1.0;
   ctx.stroke();
 
   ctx.restore();
 }
 
-function frame() {
-  ctx.clearRect(0, 0, w, h);
+function frame(){
+  ctx.clearRect(0,0,w,h);
 
-  sparks.forEach(s => { s.update(); s.draw(); });
+  glows.forEach(g => { g.update(); g.draw(); });
   hearts.forEach(hh => { hh.update(); hh.draw(); });
 
   drawRose();
 
-  t += 0.0022;
+  t += 0.002;
   requestAnimationFrame(frame);
 }
 

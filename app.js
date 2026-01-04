@@ -8,19 +8,26 @@ const btnNext = document.getElementById("btnNext");
 const btnLoad = document.getElementById("btnLoad");
 const btnClear = document.getElementById("btnClear");
 
+const btnView = document.getElementById("btnView");
+const btnEdit = document.getElementById("btnEdit");
+const btnDebug = document.getElementById("btnDebug");
+
+const prettyView = document.getElementById("prettyView");
+const tiles = document.getElementById("tiles");
 const preview = document.getElementById("preview");
+
 const navStatus = document.getElementById("navStatus");
 
 const loveChips = document.getElementById("loveChips");
 const loveHidden = document.getElementById("lenguajes");
 
-const STORAGE_KEY = "profile-core:aurora-rose:v1";
+const STORAGE_KEY = "profile-core:pretty:v1";
 
 let step = 1;
 const total = 4;
 let selected = [];
+let debugOn = false;
 
-function $(sel){ return document.querySelector(sel); }
 function status(msg){ if (navStatus) navStatus.textContent = msg || ""; }
 
 function setStep(next) {
@@ -112,12 +119,6 @@ function fill(data) {
   });
 }
 
-function showPreview(data) {
-  if (!data) return;
-  preview.classList.remove("is-hidden");
-  preview.textContent = JSON.stringify(data, null, 2);
-}
-
 function saveLocal(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
@@ -127,6 +128,105 @@ function loadLocal() {
   if (!raw) return null;
   try { return JSON.parse(raw); } catch { return null; }
 }
+
+function v(x){
+  const s = String(x || "").trim();
+  return s ? s : "—";
+}
+
+function renderTiles(data){
+  const groups = [
+    { title: "Identidad", items: [
+      ["Nombre / Apodo", v(data.nombre)],
+      ["Cumpleaños", v(data.cumple)],
+      ["Color favorito", v(data.colorFav)],
+      ["Estado", v(data.mood)],
+      ["Frase", v(data.frase)]
+    ]},
+    { title: "Preferencias", items: [
+      ["Comidas favoritas", v(data.comidas)],
+      ["No le gusta", v(data.noComidas)],
+      ["Bebidas", v(data.bebidas)],
+      ["Postres", v(data.postres)],
+      ["Música", v(data.musica)],
+      ["Series / Películas", v(data.series)]
+    ]},
+    { title: "Relación", items: [
+      ["Lenguajes", v(data.lenguajes)],
+      ["Cuando estoy mal, necesito", v(data.triste)],
+      ["Me siento cuidada cuando", v(data.amada)],
+      ["Plan ideal", v(data.citaIdeal)]
+    ]},
+    { title: "Límites", items: [
+      ["Incomoda", v(data.incomoda)],
+      ["Evitar", v(data.evitar)],
+      ["Meta", v(data.sueno)],
+      ["Notas", v(data.extra)]
+    ]}
+  ];
+
+  tiles.innerHTML = "";
+  for (const g of groups){
+    const div = document.createElement("div");
+    div.className = "tile";
+    const h3 = document.createElement("h3");
+    h3.textContent = g.title;
+
+    const body = document.createElement("p");
+    body.textContent = g.items.map(([k,val]) => `${k}: ${val}`).join("\n");
+
+    div.appendChild(h3);
+    div.appendChild(body);
+    tiles.appendChild(div);
+  }
+}
+
+function showPretty(data){
+  if (!data) return;
+
+  prettyView.classList.remove("is-hidden");
+  renderTiles(data);
+
+  preview.textContent = JSON.stringify(data, null, 2);
+  preview.classList.toggle("is-hidden", !debugOn);
+}
+
+function hidePretty(){
+  prettyView.classList.add("is-hidden");
+}
+
+btnView.addEventListener("click", () => {
+  const data = loadLocal();
+  if (!data) { status("No hay datos guardados."); return; }
+  showPretty(data);
+  status("");
+});
+
+btnEdit.addEventListener("click", () => {
+  hidePretty();
+  status("");
+});
+
+btnDebug.addEventListener("click", () => {
+  debugOn = !debugOn;
+  preview.classList.toggle("is-hidden", !debugOn);
+});
+
+btnLoad.addEventListener("click", () => {
+  const data = loadLocal();
+  if (!data) { status("No hay datos guardados."); return; }
+  fill(data);
+  showPretty(data);
+  status("Cargado.");
+});
+
+btnClear.addEventListener("click", () => {
+  localStorage.removeItem(STORAGE_KEY);
+  tiles.innerHTML = "";
+  preview.textContent = "";
+  hidePretty();
+  status("Borrado.");
+});
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -139,26 +239,8 @@ form.addEventListener("submit", (e) => {
 
   const data = collect();
   saveLocal(data);
-  showPreview(data);
+  showPretty(data);
   status("Guardado.");
-});
-
-btnLoad.addEventListener("click", () => {
-  const data = loadLocal();
-  if (!data) {
-    status("No hay datos guardados.");
-    return;
-  }
-  fill(data);
-  showPreview(data);
-  status("Cargado.");
-});
-
-btnClear.addEventListener("click", () => {
-  localStorage.removeItem(STORAGE_KEY);
-  preview.classList.add("is-hidden");
-  preview.textContent = "";
-  status("Local data cleared.");
 });
 
 setStep(1);
@@ -166,5 +248,5 @@ setStep(1);
 const existing = loadLocal();
 if (existing) {
   fill(existing);
-  showPreview(existing);
+  showPretty(existing);
 }
