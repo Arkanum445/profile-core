@@ -5,52 +5,53 @@ const progressText = document.getElementById("progressText");
 
 const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
-const btnSave = document.getElementById("btnSave");
-
 const btnLoad = document.getElementById("btnLoad");
-const preview = document.getElementById("preview");
+const btnClear = document.getElementById("btnClear");
 
-const saveStatus = document.getElementById("saveStatus");
+const preview = document.getElementById("preview");
 const navStatus = document.getElementById("navStatus");
 
 const loveChips = document.getElementById("loveChips");
 const loveHidden = document.getElementById("lenguajes");
 
-const STORAGE_KEY = "profile-core:v1";
+const STORAGE_KEY = "profile-core:aurora-rose:v1";
 
-let currentStep = 1;
-const totalSteps = 4;
-
+let step = 1;
+const total = 4;
 let selected = [];
 
-function setStatus(el, msg) {
-  if (!el) return;
-  el.textContent = msg || "";
-}
+function $(sel){ return document.querySelector(sel); }
+function status(msg){ if (navStatus) navStatus.textContent = msg || ""; }
 
-function setStep(n) {
-  currentStep = Math.max(1, Math.min(totalSteps, n));
+function setStep(next) {
+  step = Math.max(1, Math.min(total, next));
 
   document.querySelectorAll(".step").forEach(s => {
-    const step = Number(s.dataset.step);
-    s.classList.toggle("is-hidden", step !== currentStep);
+    const n = Number(s.dataset.step);
+    s.classList.toggle("is-active", n === step);
   });
 
-  const pct = Math.round((currentStep / totalSteps) * 100);
+  const pct = Math.round((step / total) * 100);
   progressFill.style.width = `${pct}%`;
-  progressText.textContent = `Step ${currentStep} of ${totalSteps}`;
+  progressText.textContent = `Paso ${step} / ${total}`;
 
-  btnPrev.disabled = currentStep === 1;
-
-  const isLast = currentStep === totalSteps;
-  btnNext.classList.toggle("is-hidden", isLast);
-  btnSave.classList.toggle("is-hidden", !isLast);
+  btnPrev.style.visibility = step === 1 ? "hidden" : "visible";
+  btnNext.style.display = step === total ? "none" : "inline-flex";
 }
 
-btnPrev.addEventListener("click", () => setStep(currentStep - 1));
-btnNext.addEventListener("click", () => setStep(currentStep + 1));
+function validateStep1() {
+  const nombre = String(form.nombre?.value || "").trim();
+  const msgEl = document.querySelector('[data-for="nombre"]');
+  if (!nombre) {
+    if (msgEl) msgEl.textContent = "Este campo es obligatorio.";
+    form.nombre?.focus();
+    return false;
+  }
+  if (msgEl) msgEl.textContent = "";
+  return true;
+}
 
-loveChips.addEventListener("click", (e) => {
+loveChips?.addEventListener("click", (e) => {
   const chip = e.target.closest(".chip");
   if (!chip) return;
 
@@ -69,11 +70,23 @@ loveChips.addEventListener("click", (e) => {
   loveHidden.value = selected.join(" | ");
 });
 
+btnPrev.addEventListener("click", () => {
+  status("");
+  setStep(step - 1);
+});
+
+btnNext.addEventListener("click", () => {
+  status("");
+  if (step === 1 && !validateStep1()) return;
+  setStep(step + 1);
+});
+
 function collect() {
   const fd = new FormData(form);
   const obj = {};
   for (const [k, v] of fd.entries()) obj[k] = String(v || "").trim();
   obj.lenguajes = loveHidden.value || "";
+  obj._savedAt = new Date().toISOString();
   return obj;
 }
 
@@ -117,33 +130,35 @@ function loadLocal() {
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  setStatus(navStatus, "");
+  status("");
 
-  const nombre = String(form.nombre?.value || "").trim();
-  if (!nombre) {
-    setStatus(navStatus, "Name / Alias is required.");
+  if (!validateStep1()) {
     setStep(1);
-    form.nombre?.focus();
     return;
   }
 
   const data = collect();
   saveLocal(data);
-
-  if (saveStatus) saveStatus.textContent = "Saved locally. Cloud sync will be added in the next phase.";
-  setStatus(navStatus, "Saved.");
   showPreview(data);
+  status("Guardado.");
 });
 
 btnLoad.addEventListener("click", () => {
   const data = loadLocal();
   if (!data) {
-    setStatus(navStatus, "No local data found.");
+    status("No hay datos guardados.");
     return;
   }
   fill(data);
-  setStatus(navStatus, "Loaded.");
   showPreview(data);
+  status("Cargado.");
+});
+
+btnClear.addEventListener("click", () => {
+  localStorage.removeItem(STORAGE_KEY);
+  preview.classList.add("is-hidden");
+  preview.textContent = "";
+  status("Local data cleared.");
 });
 
 setStep(1);

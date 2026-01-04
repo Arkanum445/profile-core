@@ -9,222 +9,229 @@
 
 <body>
   <div class="bg" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
 
-  <main class="container">
-    <header class="header">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <main class="wrap">
+    <header class="topbar">
       <div class="brand">
-        <div class="mark" aria-hidden="true"></div>
-        <div class="titles">
-          <h1 class="title">Profile Core</h1>
-          <p class="subtitle">Private profile capture and review</p>
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="brand-title">Profile Core</div>
+          <div class="brand-sub">Private profile capture · Aurora Rose edition</div>
         </div>
       </div>
 
-      <div class="header-actions">
-        <span class="tag is-hidden" id="sessionTag">Not signed in</span>
-        <button class="btn btn-secondary is-hidden" id="btnLogout" type="button">Sign out</button>
+      <div class="top-actions">
+        <button class="ghost" id="btnLoad" type="button">Load</button>
       </div>
     </header>
 
-    <section class="panel">
-      <div class="panel-head">
-        <h2 class="panel-title">Profile Form</h2>
-        <p class="panel-subtitle">Structured data entry with step navigation.</p>
-      </div>
-
-      <div class="divider"></div>
-
-      <form class="form" id="profileForm" novalidate>
-        <div class="progress">
-          <div class="progress-bar" aria-hidden="true">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
-          <div class="progress-text" id="progressText">Step 1 of 4</div>
+    <section class="card" aria-label="Formulario">
+      <div class="card-head">
+        <div>
+          <h1 class="h1">Perfil</h1>
+          <p class="lead">Responde con calma. Esto se guarda en tu dispositivo por ahora.</p>
         </div>
 
-        <!-- Step 1 -->
-        <section class="step" data-step="1">
-          <h3 class="step-title">Identity</h3>
-          <p class="muted">Base information.</p>
+        <div class="meter">
+          <div class="meter-bar" aria-hidden="true">
+            <div class="meter-fill" id="progressFill"></div>
+          </div>
+          <div class="meter-text" id="progressText">Paso 1 / 4</div>
+        </div>
+      </div>
 
-          <div class="grid-2">
+      <div class="line"></div>
+
+      <form id="profileForm" class="form" novalidate>
+        <!-- STEP 1 -->
+        <section class="step is-active" data-step="1">
+          <div class="step-head">
+            <div class="step-kicker">Paso 1</div>
+            <h2 class="h2">Identidad</h2>
+            <p class="muted">Información base y detalles personales.</p>
+          </div>
+
+          <div class="grid">
             <div class="field">
-              <label for="nombre">Name / Alias</label>
-              <input id="nombre" name="nombre" autocomplete="name" required />
-              <small class="hint">Required</small>
+              <label for="nombre">Nombre / Apodo</label>
+              <input id="nombre" name="nombre" placeholder="Ej. Valeria" required />
+              <div class="field-msg" data-for="nombre"></div>
             </div>
 
             <div class="field">
-              <label for="cumple">Birth date</label>
+              <label for="cumple">Cumpleaños</label>
               <input id="cumple" name="cumple" type="date" />
             </div>
-          </div>
 
-          <div class="grid-2">
             <div class="field">
-              <label for="colorFav">Favorite color</label>
-              <input id="colorFav" name="colorFav" />
+              <label for="colorFav">Color favorito</label>
+              <input id="colorFav" name="colorFav" placeholder="Ej. Lavanda" />
             </div>
 
             <div class="field">
-              <label for="mood">Current state</label>
+              <label for="mood">Estado actual</label>
               <select id="mood" name="mood">
                 <option value=""></option>
-                <option>Calm</option>
-                <option>Focused</option>
-                <option>Motivated</option>
-                <option>Creative</option>
-                <option>Tired</option>
+                <option>Calma</option>
+                <option>Enfocada</option>
+                <option>Motivada</option>
+                <option>Creativa</option>
+                <option>Con sueño</option>
               </select>
             </div>
-          </div>
 
-          <div class="field">
-            <label for="frase">Personal phrase</label>
-            <input id="frase" name="frase" />
+            <div class="field col-2">
+              <label for="frase">Frase personal</label>
+              <input id="frase" name="frase" placeholder="Algo que te represente" />
+            </div>
           </div>
         </section>
 
-        <!-- Step 2 -->
-        <section class="step is-hidden" data-step="2">
-          <h3 class="step-title">Preferences</h3>
-          <p class="muted">Food and entertainment.</p>
+        <!-- STEP 2 -->
+        <section class="step" data-step="2">
+          <div class="step-head">
+            <div class="step-kicker">Paso 2</div>
+            <h2 class="h2">Preferencias</h2>
+            <p class="muted">Comida, gustos y entretenimiento.</p>
+          </div>
 
-          <div class="grid-2">
-            <div class="field">
-              <label for="comidas">Favorite foods</label>
-              <textarea id="comidas" name="comidas" rows="3"></textarea>
+          <div class="grid">
+            <div class="field col-2">
+              <label for="comidas">Comidas favoritas</label>
+              <textarea id="comidas" name="comidas" rows="3" placeholder="Ej. sushi, pasta, ceviche"></textarea>
             </div>
 
-            <div class="field">
-              <label for="noComidas">Disliked foods</label>
+            <div class="field col-2">
+              <label for="noComidas">Comidas que no te gustan</label>
               <textarea id="noComidas" name="noComidas" rows="3"></textarea>
             </div>
-          </div>
 
-          <div class="grid-2">
             <div class="field">
-              <label for="bebidas">Favorite drinks</label>
-              <input id="bebidas" name="bebidas" />
+              <label for="bebidas">Bebidas favoritas</label>
+              <input id="bebidas" name="bebidas" placeholder="Ej. limonada, café" />
             </div>
 
             <div class="field">
-              <label for="postres">Favorite desserts</label>
-              <input id="postres" name="postres" />
+              <label for="postres">Postres favoritos</label>
+              <input id="postres" name="postres" placeholder="Ej. helado, cheesecake" />
             </div>
-          </div>
 
-          <div class="grid-2">
             <div class="field">
-              <label for="musica">Music / artists</label>
+              <label for="musica">Música / artistas</label>
               <input id="musica" name="musica" />
             </div>
 
             <div class="field">
-              <label for="series">Series / movies</label>
+              <label for="series">Series / películas</label>
               <input id="series" name="series" />
             </div>
           </div>
         </section>
 
-        <!-- Step 3 -->
-        <section class="step is-hidden" data-step="3">
-          <h3 class="step-title">Relationship</h3>
-          <p class="muted">Communication and support.</p>
-
-          <div class="field">
-            <label>Appreciation styles (max 2)</label>
-            <div class="chips" id="loveChips" role="group" aria-label="Appreciation styles">
-              <button type="button" class="chip" data-val="Words">Words</button>
-              <button type="button" class="chip" data-val="Time">Time</button>
-              <button type="button" class="chip" data-val="Details">Details</button>
-              <button type="button" class="chip" data-val="Service">Service</button>
-              <button type="button" class="chip" data-val="Touch">Touch</button>
-            </div>
-            <input name="lenguajes" id="lenguajes" type="hidden" />
-            <small class="hint">Up to 2 selections</small>
+        <!-- STEP 3 -->
+        <section class="step" data-step="3">
+          <div class="step-head">
+            <div class="step-kicker">Paso 3</div>
+            <h2 class="h2">Relación</h2>
+            <p class="muted">Cómo te sientes cuidada y qué te hace bien.</p>
           </div>
 
-          <div class="grid-2">
-            <div class="field">
-              <label for="triste">When I feel down, I need</label>
+          <div class="field">
+            <label>Lenguajes de aprecio (máximo 2)</label>
+            <div class="chips" id="loveChips" role="group" aria-label="Lenguajes">
+              <button type="button" class="chip" data-val="Palabras">Palabras</button>
+              <button type="button" class="chip" data-val="Tiempo">Tiempo</button>
+              <button type="button" class="chip" data-val="Detalles">Detalles</button>
+              <button type="button" class="chip" data-val="Servicio">Servicio</button>
+              <button type="button" class="chip" data-val="Contacto">Contacto</button>
+            </div>
+            <input name="lenguajes" id="lenguajes" type="hidden" />
+            <div class="hint">Selecciona hasta 2. Se guarda tal cual.</div>
+          </div>
+
+          <div class="grid">
+            <div class="field col-2">
+              <label for="triste">Cuando estoy mal, necesito</label>
               <textarea id="triste" name="triste" rows="3"></textarea>
             </div>
 
-            <div class="field">
-              <label for="amada">I feel supported when</label>
+            <div class="field col-2">
+              <label for="amada">Me siento cuidada cuando</label>
               <textarea id="amada" name="amada" rows="3"></textarea>
             </div>
-          </div>
 
-          <div class="field">
-            <label for="citaIdeal">Ideal plan</label>
-            <input id="citaIdeal" name="citaIdeal" />
+            <div class="field col-2">
+              <label for="citaIdeal">Plan ideal</label>
+              <input id="citaIdeal" name="citaIdeal" />
+            </div>
           </div>
         </section>
 
-        <!-- Step 4 -->
-        <section class="step is-hidden" data-step="4">
-          <h3 class="step-title">Boundaries</h3>
-          <p class="muted">Clarity and respect.</p>
+        <!-- STEP 4 -->
+        <section class="step" data-step="4">
+          <div class="step-head">
+            <div class="step-kicker">Paso 4</div>
+            <h2 class="h2">Límites</h2>
+            <p class="muted">Claridad y respeto. Esto también importa.</p>
+          </div>
 
-          <div class="grid-2">
-            <div class="field">
-              <label for="incomoda">Things that bother me</label>
+          <div class="grid">
+            <div class="field col-2">
+              <label for="incomoda">Cosas que incomodan</label>
               <textarea id="incomoda" name="incomoda" rows="3"></textarea>
             </div>
 
-            <div class="field">
-              <label for="evitar">Things to avoid</label>
+            <div class="field col-2">
+              <label for="evitar">Cosas a evitar</label>
               <textarea id="evitar" name="evitar" rows="3"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="sueno">Meta personal</label>
+              <input id="sueno" name="sueno" />
+            </div>
+
+            <div class="field">
+              <label for="extra">Notas adicionales</label>
+              <textarea id="extra" name="extra" rows="3"></textarea>
             </div>
           </div>
 
-          <div class="field">
-            <label for="sueno">Personal goal</label>
-            <input id="sueno" name="sueno" />
-          </div>
-
-          <div class="field">
-            <label for="extra">Additional notes</label>
-            <textarea id="extra" name="extra" rows="3"></textarea>
-          </div>
-
-          <div class="notice">
-            <div class="notice-title">Status</div>
-            <div class="notice-body" id="saveStatus">Local-only for now. Cloud sync will be added in the next phase.</div>
+          <div class="save-row">
+            <div class="status" id="navStatus"></div>
+            <button class="primary" id="btnSave" type="submit">Guardar</button>
           </div>
         </section>
 
         <div class="nav">
-          <button class="btn btn-secondary" id="btnPrev" type="button">Back</button>
-
-          <div class="nav-right">
-            <span class="muted small" id="navStatus"></span>
-            <button class="btn btn-primary" id="btnNext" type="button">Next</button>
-            <button class="btn btn-primary is-hidden" id="btnSave" type="submit">Save</button>
-          </div>
+          <button class="ghost" id="btnPrev" type="button">Atrás</button>
+          <button class="primary" id="btnNext" type="button">Siguiente</button>
         </div>
       </form>
 
-      <div class="divider"></div>
+      <div class="line"></div>
 
-      <div class="row">
-        <div>
-          <h3 class="panel-title-sm">Preview</h3>
-          <p class="muted small">Shows the current saved payload.</p>
+      <section class="preview">
+        <div class="preview-head">
+          <div>
+            <div class="preview-title">Vista previa</div>
+            <div class="muted small">Payload guardado localmente</div>
+          </div>
+          <button class="ghost" id="btnClear" type="button">Clear</button>
         </div>
-        <button class="btn btn-secondary" id="btnLoad" type="button">Load</button>
-      </div>
-
-      <pre class="preview is-hidden" id="preview"></pre>
+        <pre id="preview" class="code is-hidden"></pre>
+      </section>
     </section>
 
-    <footer class="footer">
-      <p class="muted small">Deployed on GitHub Pages</p>
+    <footer class="foot">
+      <span class="muted small">Deployed on GitHub Pages</span>
     </footer>
   </main>
 
   <script type="module" src="app.js"></script>
+  <script src="effects.js"></script>
 </body>
 </html>
